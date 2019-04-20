@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 # Scrapy settings for wallpaperspider project
 #
@@ -8,6 +9,8 @@
 #     https://doc.scrapy.org/en/latest/topics/settings.html
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
+
+BASE_DIR = os.path.abspath(os.getcwd() + os.path.sep + ".")
 
 BOT_NAME = 'wallpaperspider'
 
