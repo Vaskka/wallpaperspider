@@ -15,17 +15,23 @@ class WallpaperspiderItem(scrapy.Item):
     pass
 
 
-def from_url_get_color_str(url):
+def from_url_get_color_str(urls):
     """
     从url中提取color 16进制str
-    :param url:
+    :param urls:
     :return:
     """
-    r = re.match("https://alpha\.wallhaven\.cc/search\?colors=(.+)]", str(url))
-    if r:
-        return str(r.group(1))
-    else:
-        return "ffffff"
+    result = list()
+
+    for _u in urls:
+        r = re.match("https://alpha\.wallhaven\.cc/search\?colors=(.+)", str(_u))
+
+        if r:
+            result.append(str(r.group(1)))
+        else:
+            result.append("------")
+
+    return result
     pass
 
 

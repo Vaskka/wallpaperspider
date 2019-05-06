@@ -8,6 +8,7 @@ import requests
 from lxml import etree
 from scrapy.loader import ItemLoader
 from ..settings import *
+from .utils import util
 
 import wallpaperspider
 from wallpaperspider.items import WallPaperImageItem
@@ -58,8 +59,6 @@ class WallhavenSpider(scrapy.Spider):
         max_num_result = re.match(".*?(\d+)", max_page_text)
         max_page = int(max_num_result.group(1))
 
-        max_page = 1
-
         # generate
         for i in range(1, max_page + 1):
             yield scrapy.Request(url="https://alpha.wallhaven.cc/latest?page=" + str(i), callback=self.parse, cookies=WallhavenSpider._cookies)
@@ -79,19 +78,25 @@ class WallhavenSpider(scrapy.Spider):
 
     def parse_item(self, response):
 
+
+
         loader = ItemLoader(item=WallPaperImageItem(), response=response)
 
         # 图片url
-        t = response.xpath('//*[@id="wallpaper"]/@src')[0]
-
-        iu = "https:" + t
+        iu = "https:" + response.xpath('//*[@id="wallpaper"]/@src')[0].root
         loader.add_value('image_url', iu)
 
-        loader.add_xpath('tags', "//ul[id='tags']/li/a/text()")
+        loader.add_xpath('tags', '//*[@id="tags"]/li/a/text()')
 
-        loader.add_xpath('category', "//*[@id='showcase-sidebar']/div/div[1]/div[3]/dl/dd[2]/text()")
+        loader.add_xpath('category', '//*[@id="showcase-sidebar"]/div/div[1]/div[2]/dl/dd[2]/text()')
 
         loader.add_xpath('size', "//*[@id='showcase-sidebar']/div/div[1]/h3/text()")
 
-        loader.add_xpath('colors', )
+        loader.add_xpath('colors', '//*[@id="showcase-sidebar"]/div/div[1]/ul/li/a/@href')
+
+        loader.add_xpath('original', '//a[contains(@class,"username")]/@href')
+
+        loader.add_value('original_id', util.from_url_get_id(str(response._url)))
+
+        return loader.load_item()
         pass
